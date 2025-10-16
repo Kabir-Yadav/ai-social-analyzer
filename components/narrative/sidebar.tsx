@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { Home, BarChart3, FileText, Settings, HelpCircle } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Home, BarChart3, FileText, Settings, HelpCircle } from "lucide-react";
 
 export function Sidebar() {
   return (
@@ -8,10 +8,12 @@ export function Sidebar() {
         {/* Sidebar Header */}
         <div className="flex items-center gap-2 p-4 border-b">
           <div className="size-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">AI</span>
+            <span className="text-primary-foreground font-bold text-sm">
+              AI
+            </span>
           </div>
           <div>
-            <div className="font-semibold text-sm">Strategic Social</div>
+            <div className="font-semibold text-sm">Darpan</div>
             <div className="text-xs text-muted-foreground">AI Analysis</div>
           </div>
         </div>
@@ -20,7 +22,7 @@ export function Sidebar() {
         <nav className="flex-1 p-4 space-y-1">
           <Button variant="secondary" className="w-full justify-start gap-2">
             <Home className="size-4" />
-            Dashboard
+            Narrative
           </Button>
           <Button variant="ghost" className="w-full justify-start gap-2">
             <BarChart3 className="size-4" />
@@ -50,5 +52,5 @@ export function Sidebar() {
         </div>
       </div>
     </aside>
-  )
+  );
 }
