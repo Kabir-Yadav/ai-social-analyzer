@@ -7,6 +7,7 @@ export type Tweet = {
 
 export type SentimentKeywords = {
   overall_sentiment: string
+  sentiment_percentage: number
   sentiment_reason: string
   keywords: string[]
 }

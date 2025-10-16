@@ -3,6 +3,17 @@ import { NextResponse } from "next/server"
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent"
 const MAX_RETRIES = 3
 
+const counter_narrative_schema = {
+  type: "OBJECT",
+  properties: {
+    counter: {
+      type: "STRING",
+      description: "A compelling, well-structured paragraph (max 150 words) presenting the strongest counter-argument or opposing viewpoint.",
+    },
+  },
+  required: ["counter"],
+}
+
 async function callGemini(
   payload: Record<string, any>,
   { structured = false, useSearch = false }: { structured?: boolean; useSearch?: boolean } = {},
@@ -69,30 +80,19 @@ export async function POST(req: Request) {
     }
 
     const system_prompt =
-      "You are a strategic communications expert. Given the current narrative and sentiment, generate a compelling, well-structured paragraph (max 150 words) that presents the STRONGEST counter-argument or opposing viewpoint. The response must be professional and objective, suitable for a policy briefing."
-    const user_query = `Current Narrative: "${narrative}". Overall Sentiment: ${sentiment}. Generate the opposing argument.`
+      "You are a strategic communications expert specializing in counter-narratives. Given the current narrative and sentiment, generate a compelling, well-structured paragraph (max 150 words) that presents the STRONGEST counter-argument or opposing viewpoint. Focus on factual evidence, alternative perspectives, and logical reasoning. The response must be professional, objective, and suitable for a policy briefing. Avoid emotional language and focus on substantive arguments."
+    const user_query = `Current Narrative: "${narrative}". Overall Sentiment: ${sentiment}. Generate a compelling counter-argument that challenges this narrative with evidence and alternative perspectives.`
 
     const payload = {
       contents: [{ parts: [{ text: user_query }] }],
       systemInstruction: { parts: [{ text: system_prompt }] },
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: counter_narrative_schema,
+      },
     }
 
-    const res = await callGemini(payload)
-    if (res instanceof NextResponse) {
-      // Wrap into { counter }
-      const cloned = res.clone()
-      try {
-        const txt = await cloned.text()
-        try {
-          JSON.parse(txt)
-          return res
-        } catch {
-          return NextResponse.json({ counter: txt })
-        }
-      } catch {
-        return res
-      }
-    }
+    const res = await callGemini(payload, { structured: true })
     return res
   } catch (e: any) {
     return NextResponse.json({ error: `Handler error: ${e?.message || String(e)}` }, { status: 500 })

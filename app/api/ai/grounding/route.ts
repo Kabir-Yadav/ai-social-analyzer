@@ -79,16 +79,20 @@ export async function POST(req: Request) {
     }
 
     const res = await callGemini(payload, { useSearch: true })
-    // Convert plain text to { context }
+    // Convert any response into { context }
     if (res instanceof NextResponse) {
-      // Extract the text body from NextResponse to wrap into { context }
       const cloned = res.clone()
       try {
         const txt = await cloned.text()
         try {
-          // if it was JSON response already, pass through
-          JSON.parse(txt)
-          return res
+          const parsed = JSON.parse(txt)
+          if (typeof parsed === "string") {
+            return NextResponse.json({ context: parsed })
+          }
+          if (parsed && typeof parsed === "object" && "context" in parsed) {
+            return NextResponse.json(parsed as any)
+          }
+          return NextResponse.json({ context: String(txt) })
         } catch {
           return NextResponse.json({ context: txt })
         }

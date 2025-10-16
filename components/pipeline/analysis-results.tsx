@@ -22,6 +22,11 @@ export function AnalysisResults({ results }: { results: AnalysisResultsType | nu
         <div className="text-sm">
           <strong>Overall Sentiment (Agent 1): </strong>
           {results.overall_sentiment}
+          {results.sentiment_percentage && (
+            <span className="ml-2 text-xs opacity-75">
+              ({results.sentiment_percentage}% confidence)
+            </span>
+          )}
         </div>
         <div className="text-sm mt-1">
           <strong>Reason: </strong>

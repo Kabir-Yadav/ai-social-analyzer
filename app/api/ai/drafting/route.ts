@@ -5,7 +5,10 @@ const MAX_RETRIES = 3
 
 const drafting_schema = {
   type: "ARRAY",
-  items: { type: "STRING", description: "A distinct, professional response tweet (max 280 characters)." },
+  items: { 
+    type: "STRING", 
+    description: "A distinct, professional response tweet (max 200 characters) that is ready to post. Include relevant hashtags and maintain the specified persona and tone." 
+  },
 }
 
 async function callGemini(
@@ -81,8 +84,28 @@ export async function POST(req: Request) {
       )
     }
 
-    const system_prompt = `You are a professional social media response team. Draft exactly three distinct, engaging tweets based on the following context. The responses must be written from the perspective of a **${persona}** and adopt a **${tone}** tone. The output must be a JSON array containing three separate tweet strings.`
-    const user_query = `Internal Analysis (Narrative: ${narrative}, Sentiment: ${sentiment}). External Context: ${context}. Generate three unique response tweets (max 280 characters each).`
+    const system_prompt = `You are a professional social media response team specializing in strategic communications. Draft exactly three distinct, engaging tweets based on the provided context. 
+
+CRITICAL REQUIREMENTS:
+- Each tweet must be MAXIMUM 200 characters (Twitter limit)
+- Write from the perspective of a **${persona}** 
+- Adopt a **${tone}** tone throughout
+- Include relevant hashtags (2-3 per tweet)
+- Make tweets ready-to-post (no placeholders)
+- Each tweet should offer a different angle/approach
+- Use professional language appropriate for the persona
+- Ensure tweets are substantive and add value to the conversation
+
+The output must be a JSON array containing three separate tweet strings.`
+    const user_query = `Internal Analysis (Narrative: ${narrative}, Sentiment: ${sentiment}). External Context: ${context}. 
+
+Generate three unique, tweetable response tweets that:
+1. Address the narrative professionally
+2. Reflect the ${persona} perspective
+3. Maintain a ${tone} tone
+4. Include relevant hashtags
+5. Stay under 200 characters each
+6. Are ready to post immediately`
 
     const payload = {
       contents: [{ parts: [{ text: user_query }] }],

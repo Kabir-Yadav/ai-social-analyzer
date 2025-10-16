@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  env: {
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    GOOGLE_GENAI_API_KEY: process.env.GOOGLE_GENAI_API_KEY,
+  }
 }
 
 export default nextConfig

@@ -16,6 +16,10 @@ const sentiment_keyword_schema = {
       type: "STRING",
       description: "The overall sentiment (e.g., Highly Negative, Mixed, Cautiously Positive, etc.).",
     },
+    sentiment_percentage: {
+      type: "NUMBER",
+      description: "Confidence percentage (0-100) for the sentiment analysis.",
+    },
     sentiment_reason: {
       type: "STRING",
       description: "A concise sentence explaining the primary reason for the determined sentiment.",
@@ -28,7 +32,7 @@ const sentiment_keyword_schema = {
       },
     },
   },
-  required: ["overall_sentiment", "sentiment_reason", "keywords"],
+  required: ["overall_sentiment", "sentiment_percentage", "sentiment_reason", "keywords"],
 }
 
 async function callGemini(
@@ -94,7 +98,7 @@ export async function POST(req: Request) {
     }
 
     const system_prompt =
-      "You are an AI Sentiment and Keyword Analyst. Analyze the collective text and determine the overall sentiment, provide a single sentence reason for that sentiment, and extract the top 5 keywords/hashtags. The output MUST be a JSON object adhering to the specified schema."
+      "You are an AI Sentiment and Keyword Analyst. Analyze the collective text and determine the overall sentiment with confidence percentage (0-100), provide a single sentence reason for that sentiment, and extract the top 5 keywords/hashtags. Be precise with sentiment classification and provide realistic confidence scores. The output MUST be a JSON object adhering to the specified schema."
     const user_query = `Analyze the following aggregated tweet content:\n\n${tweet_text}`
 
     const payload = {

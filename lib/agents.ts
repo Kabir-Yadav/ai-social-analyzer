@@ -56,8 +56,9 @@ export async function narrative_agent(tweet_text: string): Promise<NarrativeData
 
 export async function grounding_agent(narrative: string, keywords: string[]): Promise<string> {
   // POST to your API that returns a short string paragraph summary
-  const data = await postJSON<{ context: string }>("/api/ai/grounding", { narrative, keywords })
-  return data.context
+  const data = await postJSON<string | { context: string }>("/api/ai/grounding", { narrative, keywords })
+  console.log("grounding_agent", data)
+  return typeof data === "string" ? data : data.context
 }
 
 export async function drafting_agent(
