@@ -50,7 +50,7 @@ export function FiltersForm({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Filter className="size-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-muted-foreground">
+              <span className="text-sm font-bold text-muted-foreground">
                 Filters
               </span>
               <span className="text-xs text-muted-foreground">
