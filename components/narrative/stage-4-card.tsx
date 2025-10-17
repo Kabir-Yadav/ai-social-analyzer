@@ -50,7 +50,7 @@ export function Stage4Card({
         <Button
           onClick={onRunPipeline}
           size="lg"
-          className="w-full h-14 text-lg flex-shrink-0"
+          className="w-full h-14 text-lg flex-shrink-0 text-white"
           disabled={isLoading}
         >
           {isLoading ? "✍️ Generating..." : "✍️ Generate Response Drafts"}

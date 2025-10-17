@@ -3,6 +3,11 @@ export type Tweet = {
   date: string // YYYY-MM-DD
   author: string
   text: string
+  metrics: {
+    replies: number
+    retweets: number
+    likes: number
+  }
 }
 
 export type SentimentKeywords = {

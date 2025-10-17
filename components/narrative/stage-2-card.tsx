@@ -54,7 +54,7 @@ export function Stage2Card({
           onClick={onRunPipeline}
           disabled={selectedTweetIds.length === 0 || isLoading}
           size="lg"
-          className="w-full h-14 text-lg flex-shrink-0"
+          className="w-full h-14 text-lg flex-shrink-0 text-white"
         >
           {isLoading
             ? "🧠 Analyzing..."

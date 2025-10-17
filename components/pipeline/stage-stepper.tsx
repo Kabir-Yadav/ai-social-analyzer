@@ -29,7 +29,7 @@ export function StageStepper({ steps }: { steps: Step[] }) {
                   className={cn(
                     "group inline-flex items-center gap-2 rounded-full px-3 py-1.5 md:px-4 md:py-2 border transition-all duration-300",
                     isDone
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      ? "bg-primary text-white border-primary shadow-sm "
                       : isActive
                         ? "bg-accent text-foreground border-foreground/10 shadow-xs"
                         : "bg-card text-muted-foreground border-border",
@@ -38,7 +38,7 @@ export function StageStepper({ steps }: { steps: Step[] }) {
                 >
                   <span
                     className={cn(
-                      "inline-flex size-6 items-center justify-center rounded-full text-[11px] font-medium transition-colors",
+                      "inline-flex size-6 items-center justify-center rounded-full text-[11px] font-medium transition-colors text-white",
                       isDone ? "bg-primary-foreground/20" : "bg-muted",
                     )}
                   >

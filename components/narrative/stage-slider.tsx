@@ -71,8 +71,8 @@ export function StageSlider({
               currentStage === stage
                 ? "w-8 bg-primary"
                 : canNavigateToStage(stage)
-                ? "bg-muted hover:bg-muted-foreground/50"
-                : "bg-muted/50 cursor-not-allowed"
+                ? "bg-muted-foreground/50"
+                : "bg-muted cursor-not-allowed"
             )}
             aria-label={`Go to stage ${stage}`}
           />

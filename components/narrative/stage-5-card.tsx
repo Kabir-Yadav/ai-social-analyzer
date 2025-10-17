@@ -54,7 +54,7 @@ export function Stage5Card({
               onClick={onRunCounterNarrative}
               variant="secondary"
               size="lg"
-              className="w-full h-14 text-lg mb-4"
+              className="w-full h-14 text-lg mb-4 text-white"
               disabled={isLoading}
             >
               {isLoading ? "⚡ Generating..." : "⚡ Generate Counter-Narrative"}

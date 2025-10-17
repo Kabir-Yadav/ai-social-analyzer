@@ -38,7 +38,7 @@ export function Stage1Card({ isLoading, onRunPipeline }: Stage1CardProps) {
         <Button
           onClick={onRunPipeline}
           size="lg"
-          className="w-full h-14 text-lg flex-shrink-0"
+          className="w-full h-14 text-lg flex-shrink-0 text-white"
           disabled={isLoading}
         >
           {isLoading ? "🔄 Fetching..." : "🔍 Search & Fetch Tweets"}

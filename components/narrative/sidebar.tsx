@@ -1,7 +1,22 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { Home, BarChart3, FileText, Settings, HelpCircle } from "lucide-react";
+import {
+  Home,
+  BarChart3,
+  FileText,
+  Settings,
+  HelpCircle,
+  FolderOpen,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-card flex-shrink-0 overflow-y-auto">
       <div className="flex h-full flex-col">
@@ -20,27 +35,70 @@ export function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1">
-          <Button variant="secondary" className="w-full justify-start gap-2">
-            <Home className="size-4" />
-            Narrative
-          </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <BarChart3 className="size-4" />
-            Analytics
-          </Button>
-          <Button variant="ghost" className="w-full justify-start gap-2">
-            <FileText className="size-4" />
-            Reports
-          </Button>
+          <Link href="/" className="block">
+            <Button
+              variant={pathname === "/" ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Home className="size-4" />
+              Narrative
+            </Button>
+          </Link>
+          <Link href="/analytics" className="block">
+            <Button
+              variant={pathname === "/analytics" ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <BarChart3 className="size-4" />
+              Analytics
+            </Button>
+          </Link>
+          <Link href="/file-manager" className="block">
+            <Button
+              variant={pathname === "/file-manager" ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <FolderOpen className="size-4" />
+              File Manager
+            </Button>
+          </Link>
+          <Link href="/reports" className="block">
+            <Button
+              variant={pathname === "/reports" ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <FileText className="size-4" />
+              Reports
+            </Button>
+          </Link>
+          <Link href="/influencers" className="block">
+            <Button
+              variant={pathname === "/influencers" ? "secondary" : "ghost"}
+              className="w-full justify-start gap-2"
+            >
+              <Users className="size-4" />
+              Influencers
+            </Button>
+          </Link>
           <div className="pt-4 border-t mt-4">
-            <Button variant="ghost" className="w-full justify-start gap-2">
-              <Settings className="size-4" />
-              Settings
-            </Button>
-            <Button variant="ghost" className="w-full justify-start gap-2">
-              <HelpCircle className="size-4" />
-              Help
-            </Button>
+            <Link href="/settings" className="block">
+              <Button
+                variant={pathname === "/settings" ? "secondary" : "ghost"}
+                className="w-full justify-start gap-2"
+              >
+                <Settings className="size-4" />
+                Settings
+              </Button>
+            </Link>
+            <Link href="/help" className="block">
+              <Button
+                variant={pathname === "/help" ? "secondary" : "ghost"}
+                className="w-full justify-start gap-2"
+              >
+                <HelpCircle className="size-4" />
+                Help
+              </Button>
+            </Link>
           </div>
         </nav>
 

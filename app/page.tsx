@@ -30,7 +30,7 @@ export default function Page() {
     useState<AnalysisResultsType | null>(null);
   const [groundedContext, setGroundedContext] = useState<string | null>(null);
   const [responseDrafts, setResponseDrafts] = useState<DraftItem[] | null>(
-    null,
+    null
   );
   const [counterArgument, setCounterArgument] = useState<string | null>(null);
   const [keyword, setKeyword] = useState<string>("AI Ethics in Hiring");
@@ -208,7 +208,7 @@ export default function Page() {
     try {
       const ctx = await grounding_agent(
         analysisResults.narrative_summary || "",
-        analysisResults.keywords || [],
+        analysisResults.keywords || []
       );
       console.log("run_grounding_pipeline", ctx);
       setGroundedContext(ctx || "");
@@ -245,7 +245,7 @@ export default function Page() {
         analysisResults.overall_sentiment || "",
         groundedContext || "",
         persona,
-        tone,
+        tone
       );
       const normalized: DraftItem[] = (drafts || []).map((d) => ({
         current: d,
@@ -280,7 +280,7 @@ export default function Page() {
     try {
       const text = await counter_narrative_agent(
         analysisResults.narrative_summary || "",
-        analysisResults.overall_sentiment || "",
+        analysisResults.overall_sentiment || ""
       );
       setCounterArgument(text || "");
       toast({

@@ -15,105 +15,102 @@ body {
 }
 
 :root {
-  /* Modern Orange Theme - Light Mode */
-  --background: oklch(0.99 0.005 60);
-  /* Warm white with subtle orange tint */
-  --foreground: oklch(0.15 0.01 30);
-  /* Deep warm brown for text */
-  --card: oklch(0.98 0.008 50);
-  /* Slightly warmer card background */
-  --card-foreground: oklch(0.15 0.01 30);
-  --popover: oklch(0.98 0.008 50);
-  --popover-foreground: oklch(0.15 0.01 30);
-  --primary: oklch(0.65 0.18 35);
-  /* Vibrant orange primary */
+  /* Professional Color Scheme - Light Mode */
+  --background: oklch(0.98 0.002 240);
+  /* Neutral slate background */
+  --foreground: oklch(0.15 0.008 240);
+  /* Deep slate for text */
+  --card: oklch(1 0 0);
+  /* Pure white cards */
+  --card-foreground: oklch(0.15 0.008 240);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.008 240);
+  --primary: oklch(0.60 0.22 30);
+  /* Professional orange primary */
   --primary-foreground: oklch(0.98 0 0);
-  /* Pure white on orange */
-  --secondary: oklch(0.95 0.02 40);
-  /* Soft orange secondary */
-  --secondary-foreground: oklch(0.20 0.01 30);
-  --muted: oklch(0.96 0.01 45);
-  /* Very light orange muted */
-  --muted-foreground: oklch(0.50 0.01 30);
-  --accent: oklch(0.94 0.03 35);
-  /* Subtle orange accent */
-  --accent-foreground: oklch(0.20 0.01 30);
-  --destructive: oklch(0.60 0.20 15);
-  /* Warm red for destructive */
+  /* White text on orange */
+  --secondary: oklch(0.96 0.01 240);
+  /* Soft slate secondary */
+  --secondary-foreground: oklch(0.25 0.01 240);
+  --muted: oklch(0.97 0.005 240);
+  /* Very light slate muted */
+  --muted-foreground: oklch(0.45 0.01 240);
+  --accent: oklch(0.96 0.01 240);
+  /* Subtle slate accent */
+  --accent-foreground: oklch(0.25 0.01 240);
+  --destructive: oklch(0.58 0.22 15);
+  /* Professional red */
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.90 0.015 40);
-  /* Warm border */
-  --input: oklch(0.92 0.01 45);
-  /* Light orange input */
-  --ring: oklch(0.65 0.18 35);
+  --border: oklch(0.90 0.005 240);
+  /* Clean slate border */
+  --input: oklch(1 0 0);
+  /* White input background */
+  --ring: oklch(0.60 0.22 30);
   /* Orange focus ring */
-  --chart-1: oklch(0.65 0.18 35);
-  --chart-2: oklch(0.70 0.15 25);
-  --chart-3: oklch(0.60 0.20 45);
-  --chart-4: oklch(0.75 0.12 15);
-  --chart-5: oklch(0.68 0.16 55);
-  --radius: 1rem;
-  --sidebar: oklch(0.97 0.01 50);
-  --sidebar-foreground: oklch(0.15 0.01 30);
-  --sidebar-primary: oklch(0.65 0.18 35);
+  --chart-1: oklch(0.60 0.22 30);
+  --chart-2: oklch(0.55 0.20 200);
+  --chart-3: oklch(0.65 0.18 140);
+  --chart-4: oklch(0.70 0.15 280);
+  --chart-5: oklch(0.58 0.20 60);
+  --radius: 0.75rem;
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.15 0.008 240);
+  --sidebar-primary: oklch(0.60 0.22 30);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.94 0.02 40);
-  --sidebar-accent-foreground: oklch(0.20 0.01 30);
-  --sidebar-border: oklch(0.90 0.015 40);
-  --sidebar-ring: oklch(0.65 0.18 35);
+  --sidebar-accent: oklch(0.97 0.005 240);
+  --sidebar-accent-foreground: oklch(0.25 0.01 240);
+  --sidebar-border: oklch(0.92 0.005 240);
+  --sidebar-ring: oklch(0.60 0.22 30);
 }
 
 .dark {
-  /* Modern Dark Theme with Orange Accents */
-  --background: oklch(0.12 0.01 240);
-  /* Slightly lighter dark background */
+  /* Professional Dark Theme */
+  --background: oklch(0.13 0.012 240);
+  /* Rich dark slate */
   --foreground: oklch(0.95 0.005 240);
   /* Crisp white text */
-  --card: oklch(0.16 0.015 240);
-  /* Lighter card with subtle blue tint */
+  --card: oklch(0.17 0.015 240);
+  /* Elevated card background */
   --card-foreground: oklch(0.95 0.005 240);
-  --popover: oklch(0.18 0.015 240);
+  --popover: oklch(0.19 0.015 240);
   /* Lighter popover */
   --popover-foreground: oklch(0.95 0.005 240);
-  --primary: oklch(0.70 0.20 35);
-  /* Bright orange primary for dark mode */
-  --primary-foreground: oklch(0.12 0.01 240);
+  --primary: oklch(0.65 0.24 30);
+  /* Vibrant orange for dark mode */
+  --primary-foreground: oklch(0.13 0.012 240);
   /* Dark text on orange */
-  --secondary: oklch(0.22 0.02 240);
-  /* Lighter secondary with subtle tint */
+  --secondary: oklch(0.23 0.018 240);
+  /* Slate secondary */
   --secondary-foreground: oklch(0.90 0.005 240);
-  --muted: oklch(0.20 0.015 240);
-  /* Lighter muted background */
-  --muted-foreground: oklch(0.65 0.005 240);
-  /* Clean muted text */
-  --accent: oklch(0.24 0.02 240);
-  /* Lighter accent */
+  --muted: oklch(0.21 0.015 240);
+  /* Muted background */
+  --muted-foreground: oklch(0.60 0.008 240);
+  /* Muted text */
+  --accent: oklch(0.25 0.02 240);
+  /* Accent background */
   --accent-foreground: oklch(0.90 0.005 240);
-  --destructive: oklch(0.65 0.22 15);
-  /* Warm red destructive */
+  --destructive: oklch(0.62 0.24 15);
+  /* Warm red */
   --destructive-foreground: oklch(0.95 0.005 240);
-  --border: oklch(0.30 0.02 240);
-  /* Lighter border */
-  --input: oklch(0.18 0.015 240);
-  /* Lighter input */
-  --ring: oklch(0.70 0.20 35);
+  --border: oklch(0.28 0.018 240);
+  /* Subtle borders */
+  --input: oklch(0.19 0.015 240);
+  /* Input background */
+  --ring: oklch(0.65 0.24 30);
   /* Orange focus ring */
-  --chart-1: oklch(0.70 0.20 35);
-  --chart-2: oklch(0.65 0.18 25);
-  --chart-3: oklch(0.75 0.15 45);
-  --chart-4: oklch(0.68 0.22 15);
-  --chart-5: oklch(0.72 0.18 55);
-  --sidebar: oklch(0.14 0.01 240);
-  /* Lighter sidebar */
+  --chart-1: oklch(0.65 0.24 30);
+  --chart-2: oklch(0.60 0.22 200);
+  --chart-3: oklch(0.70 0.20 140);
+  --chart-4: oklch(0.75 0.18 280);
+  --chart-5: oklch(0.63 0.22 60);
+  --sidebar: oklch(0.15 0.013 240);
   --sidebar-foreground: oklch(0.95 0.005 240);
-  --sidebar-primary: oklch(0.70 0.20 35);
-  --sidebar-primary-foreground: oklch(0.12 0.01 240);
-  --sidebar-accent: oklch(0.20 0.015 240);
-  /* Lighter sidebar accent */
+  --sidebar-primary: oklch(0.65 0.24 30);
+  --sidebar-primary-foreground: oklch(0.13 0.012 240);
+  --sidebar-accent: oklch(0.21 0.015 240);
   --sidebar-accent-foreground: oklch(0.90 0.005 240);
-  --sidebar-border: oklch(0.30 0.02 240);
-  /* Lighter sidebar border */
-  --sidebar-ring: oklch(0.70 0.20 35);
+  --sidebar-border: oklch(0.28 0.018 240);
+  --sidebar-ring: oklch(0.65 0.24 30);
 }
 
 @theme inline {
@@ -165,11 +162,20 @@ body {
   body {
     @apply bg-background text-foreground;
     transition: background-color 0.3s ease, color 0.3s ease;
+    font-feature-settings: "cv11", "ss01";
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Enhanced text rendering */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   /* Reduce image brightness in dark mode */
   .dark img:not([class*="logo"]) {
-    filter: brightness(0.85) contrast(1.1);
+    filter: brightness(0.90) contrast(1.05);
   }
 
   /* Smooth transitions for theme changes */
@@ -177,126 +183,190 @@ body {
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   }
 
+  /* Enhanced input styling */
+  input,
+  textarea,
+  select {
+    transition: all 0.2s ease;
+  }
+
   /* Enhanced input styling in dark mode */
   .dark input,
   .dark textarea,
   .dark select {
-    background-color: oklch(0.18 0.015 240) !important;
-    border-color: oklch(0.30 0.02 240) !important;
+    background-color: oklch(0.19 0.015 240) !important;
+    border-color: oklch(0.28 0.018 240) !important;
     color: oklch(0.95 0.005 240) !important;
   }
 
   .dark input:hover,
   .dark textarea:hover,
   .dark select:hover {
-    border-color: oklch(0.40 0.025 240) !important;
+    border-color: oklch(0.35 0.02 240) !important;
   }
 
   .dark input:focus,
   .dark textarea:focus,
   .dark select:focus {
-    background-color: oklch(0.20 0.02 240) !important;
-    border-color: oklch(0.70 0.20 35) !important;
+    background-color: oklch(0.21 0.016 240) !important;
+    border-color: oklch(0.65 0.24 30) !important;
+    box-shadow: 0 0 0 3px oklch(0.65 0.24 30 / 0.1) !important;
   }
 
   .dark input::placeholder,
   .dark textarea::placeholder {
-    color: oklch(0.60 0.005 240) !important;
+    color: oklch(0.55 0.008 240) !important;
   }
 
   /* Better label visibility */
   .dark label {
-    color: oklch(0.85 0.005 240) !important;
+    color: oklch(0.88 0.005 240) !important;
     font-weight: 500;
   }
 
   /* Improved button contrast */
   .dark button:not([class*="bg-primary"]):not([class*="bg-secondary"]):not([class*="bg-destructive"]) {
-    border-color: oklch(0.30 0.02 240);
+    border-color: oklch(0.28 0.018 240);
   }
 
   .dark button[class*="outline"]:hover {
-    background-color: oklch(0.22 0.02 240) !important;
-    border-color: oklch(0.40 0.025 240) !important;
+    background-color: oklch(0.23 0.018 240) !important;
+    border-color: oklch(0.35 0.02 240) !important;
   }
 
-  /* Card borders more visible */
-  .dark [class*="border-2"] {
-    border-color: oklch(0.30 0.02 240) !important;
+  /* Card styling improvements */
+  .dark [class*="border"] {
+    border-color: oklch(0.28 0.018 240);
   }
 
   .dark [class*="border-dashed"] {
-    border-color: oklch(0.35 0.025 240) !important;
+    border-color: oklch(0.32 0.02 240) !important;
   }
 
-  /* Better scrollbar in dark mode */
-  .dark ::-webkit-scrollbar {
+  /* Better scrollbar styling */
+  ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
   }
 
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.82 0.005 240);
+    border-radius: 5px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.70 0.008 240);
+    background-clip: padding-box;
+  }
+
   .dark ::-webkit-scrollbar-track {
-    background: oklch(0.14 0.01 240);
+    background: transparent;
   }
 
   .dark ::-webkit-scrollbar-thumb {
-    background: oklch(0.30 0.02 240);
+    background: oklch(0.28 0.018 240);
     border-radius: 5px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
   }
 
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.40 0.025 240);
+    background: oklch(0.35 0.02 240);
+    background-clip: padding-box;
   }
 
   /* Muted text better visibility */
   .dark [class*="text-muted-foreground"] {
-    color: oklch(0.65 0.005 240) !important;
+    color: oklch(0.60 0.008 240) !important;
   }
 
   /* Disabled state clarity */
-  .dark button:disabled,
-  .dark input:disabled {
+  button:disabled,
+  input:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 
+  .dark button:disabled,
+  .dark input:disabled {
+    opacity: 0.4;
+  }
+
+  /* Checkbox styling */
+  input[type="checkbox"] {
+    transition: all 0.2s ease;
+  }
+
   /* Checkbox visibility in dark mode */
   .dark input[type="checkbox"] {
-    background-color: oklch(0.18 0.015 240) !important;
-    border-color: oklch(0.30 0.02 240) !important;
-    color: oklch(0.95 0.005 240) !important;
+    background-color: oklch(0.19 0.015 240) !important;
+    border-color: oklch(0.28 0.018 240) !important;
   }
 
   .dark input[type="checkbox"]:checked {
-    background-color: oklch(0.70 0.20 35) !important;
-    border-color: oklch(0.70 0.20 35) !important;
+    background-color: oklch(0.65 0.24 30) !important;
+    border-color: oklch(0.65 0.24 30) !important;
   }
 
   .dark input[type="checkbox"]:hover {
-    border-color: oklch(0.40 0.025 240) !important;
+    border-color: oklch(0.35 0.02 240) !important;
   }
 
   .dark input[type="checkbox"]:focus {
-    border-color: oklch(0.70 0.20 35) !important;
-    box-shadow: 0 0 0 2px oklch(0.70 0.20 35 / 0.2) !important;
+    border-color: oklch(0.65 0.24 30) !important;
+    box-shadow: 0 0 0 3px oklch(0.65 0.24 30 / 0.15) !important;
   }
 
   /* Custom checkbox component styling */
   .dark [data-state="unchecked"] {
-    background-color: oklch(0.18 0.015 240) !important;
-    border-color: oklch(0.30 0.02 240) !important;
+    background-color: oklch(0.19 0.015 240) !important;
+    border-color: oklch(0.28 0.018 240) !important;
   }
 
   .dark [data-state="checked"] {
-    background-color: oklch(0.70 0.20 35) !important;
-    border-color: oklch(0.70 0.20 35) !important;
-    color: oklch(0.12 0.01 240) !important;
+    background-color: oklch(0.65 0.24 30) !important;
+    border-color: oklch(0.65 0.24 30) !important;
+    color: oklch(0.13 0.012 240) !important;
   }
 
   .dark [data-state="indeterminate"] {
-    background-color: oklch(0.70 0.20 35) !important;
-    border-color: oklch(0.70 0.20 35) !important;
-    color: oklch(0.12 0.01 240) !important;
+    background-color: oklch(0.65 0.24 30) !important;
+    border-color: oklch(0.65 0.24 30) !important;
+    color: oklch(0.13 0.012 240) !important;
+  }
+
+  /* Badge styling improvements */
+  [class*="badge"] {
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  /* Focus visible improvements */
+  *:focus-visible {
+    outline: 2px solid oklch(0.60 0.22 30);
+    outline-offset: 2px;
+  }
+
+  .dark *:focus-visible {
+    outline: 2px solid oklch(0.65 0.24 30);
+    outline-offset: 2px;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: oklch(0.60 0.22 30 / 0.2);
+    color: inherit;
+  }
+
+  .dark ::selection {
+    background-color: oklch(0.65 0.24 30 / 0.3);
+    color: inherit;
   }
 
   /* Shimmer animation for loading states */
@@ -329,20 +399,20 @@ body {
   /* Enhanced shimmer effect */
   .shimmer {
     background: linear-gradient(90deg,
-        oklch(0.96 0.01 45) 0%,
-        oklch(0.94 0.02 40) 20%,
-        oklch(0.96 0.01 45) 40%,
-        oklch(0.96 0.01 45) 100%);
+        oklch(0.97 0.005 240) 0%,
+        oklch(0.95 0.008 240) 20%,
+        oklch(0.97 0.005 240) 40%,
+        oklch(0.97 0.005 240) 100%);
     background-size: 1000px 100%;
     animation: shimmer 2s linear infinite;
   }
 
   .dark .shimmer {
     background: linear-gradient(90deg,
-        oklch(0.16 0.015 240) 0%,
-        oklch(0.20 0.02 240) 20%,
-        oklch(0.16 0.015 240) 40%,
-        oklch(0.16 0.015 240) 100%);
+        oklch(0.17 0.015 240) 0%,
+        oklch(0.21 0.018 240) 20%,
+        oklch(0.17 0.015 240) 40%,
+        oklch(0.17 0.015 240) 100%);
     background-size: 1000px 100%;
     animation: shimmer 2s linear infinite;
   }
@@ -368,6 +438,30 @@ body {
 
     to {
       transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* Fade in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Scale animation */
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+
+    to {
+      transform: scale(1);
       opacity: 1;
     }
   }
