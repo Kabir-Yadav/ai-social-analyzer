@@ -14,7 +14,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import { Doughnut, Line, Bar } from "react-chartjs-2";
+import { Doughnut, Bar } from "react-chartjs-2";
 
 ChartJS.register(
   ArcElement,
@@ -56,11 +56,11 @@ import AnalyticsTweetList from "@/components/analytics/tweet-list";
 import RepostedSlider from "@/components/analytics/reposted-slider";
 import KeywordCloud from "@/components/analytics/keyword-cloud";
 import {
-  fetchAllTweets,
-  getAnalyticsSummary,
   fetchTweetsBySentiment,
   fetchTweetsFiltered,
   getAnalyticsSummaryByRange,
+  formatDateOnly,
+  type TimeRange,
 } from "@/lib/tweet-service";
 
 function analyzeSentiment(text: string): "positive" | "negative" | "neutral" {
@@ -602,12 +602,108 @@ function resolveSentiment(tweet: UiTweet): "positive" | "negative" | "neutral" {
   return analyzeSentiment(tweet.text);
 }
 
+function parseTweetDate(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const dateOnly = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (dateOnly) {
+    const year = Number(dateOnly[1]);
+    const month = Number(dateOnly[2]) - 1;
+    const day = Number(dateOnly[3]);
+    const local = new Date(year, month, day);
+    return Number.isNaN(local.getTime()) ? null : local;
+  }
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function addDays(base: Date, offset: number): Date {
+  const d = new Date(base);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + offset);
+  return d;
+}
+
+function enumerateDays(start: Date, end: Date): Date[] {
+  const days: Date[] = [];
+  const cursor = new Date(start);
+  cursor.setHours(0, 0, 0, 0);
+  const last = new Date(end);
+  last.setHours(0, 0, 0, 0);
+  while (cursor <= last) {
+    days.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return days;
+}
+
+function daysForRange(range: TimeRange, tweets: UiTweet[]): Date[] {
+  if (range !== "all") {
+    const end = new Date();
+    end.setHours(0, 0, 0, 0);
+    const count =
+      range === "24h" ? 2 : range === "30d" ? 30 : range === "90d" ? 90 : 7;
+    return enumerateDays(addDays(end, -(count - 1)), end);
+  }
+
+  const parsedDates = tweets
+    .map((t) => parseTweetDate(t.date))
+    .filter((d): d is Date => d !== null)
+    .map((d) => {
+      const copy = new Date(d);
+      copy.setHours(0, 0, 0, 0);
+      return copy;
+    });
+
+  if (parsedDates.length === 0) {
+    const end = new Date();
+    end.setHours(0, 0, 0, 0);
+    return enumerateDays(addDays(end, -6), end);
+  }
+
+  const min = new Date(Math.min(...parsedDates.map((d) => d.getTime())));
+  const max = new Date(Math.max(...parsedDates.map((d) => d.getTime())));
+  if (min.getTime() === max.getTime()) {
+    return enumerateDays(addDays(min, -3), addDays(max, 3));
+  }
+  return enumerateDays(min, max);
+}
+
+function buildEngagementSeries(
+  tweets: UiTweet[],
+  range: TimeRange
+): { day: string; likes: number; retweets: number; replies: number }[] {
+  const totals = new Map<
+    string,
+    { likes: number; retweets: number; replies: number }
+  >();
+
+  tweets.forEach((t) => {
+    const parsed = parseTweetDate(t.date);
+    if (!parsed) return;
+    const key = formatDateOnly(parsed);
+    const current = totals.get(key) || { likes: 0, retweets: 0, replies: 0 };
+    current.likes += t.metrics.likes;
+    current.retweets += t.metrics.retweets;
+    current.replies += t.metrics.replies;
+    totals.set(key, current);
+  });
+
+  return daysForRange(range, tweets).map((d) => {
+    const key = formatDateOnly(d);
+    const metrics = totals.get(key) || { likes: 0, retweets: 0, replies: 0 };
+    return {
+      day: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+      ...metrics,
+    };
+  });
+}
+
 export default function AnalyticsDashboard() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sentimentFilter, setSentimentFilter] = useState<
     "all" | "positive" | "negative" | "neutral"
   >("all");
-  const [timeRange, setTimeRange] = useState("7d");
+  const [timeRange, setTimeRange] = useState<TimeRange>("all");
 
   const [totalTweets, setTotalTweets] = useState(0);
   const [sentimentData, setSentimentData] = useState<any>({
@@ -644,94 +740,99 @@ export default function AnalyticsDashboard() {
   const [uiTweets, setUiTweets] = useState<UiTweet[]>([]);
   useEffect(() => {
     async function loadAnalytics() {
-      // Load analytics summary by selected time range
-      const summary = await getAnalyticsSummaryByRange(timeRange as any);
-      const pos = summary.sentimentCounts["positive"] || 0;
-      const neg = summary.sentimentCounts["negative"] || 0;
-      const neu = summary.sentimentCounts["neutral"] || 0;
-      const total = summary.totalTweets || 0;
+      try {
+        const summary = await getAnalyticsSummaryByRange(timeRange);
+        const pos = summary.sentimentCounts["positive"] || 0;
+        const neg = summary.sentimentCounts["negative"] || 0;
+        const neu = summary.sentimentCounts["neutral"] || 0;
+        const total = summary.totalTweets || 0;
 
-      setTotalTweets(total);
-      setSentimentData({
-        labels: ["Positive", "Negative", "Neutral"],
-        datasets: [
-          {
-            data: [pos, neg, neu],
-            backgroundColor: ["#22c55e", "#ef4444", "#3b82f6"],
-            borderColor: ["#16a34a", "#dc2626", "#2563eb"],
-            borderWidth: 2,
+        setTotalTweets(total);
+        setSentimentData({
+          labels: ["Positive", "Negative", "Neutral"],
+          datasets: [
+            {
+              data: [pos, neg, neu],
+              backgroundColor: ["#22c55e", "#ef4444", "#3b82f6"],
+              borderColor: ["#16a34a", "#dc2626", "#2563eb"],
+              borderWidth: 2,
+            },
+          ],
+          counts: { positive: pos, negative: neg, neutral: neu },
+          percentages: {
+            positive: total ? Math.round((pos / total) * 100) : 0,
+            negative: total ? Math.round((neg / total) * 100) : 0,
+            neutral: total ? Math.round((neu / total) * 100) : 0,
           },
-        ],
-        counts: { positive: pos, negative: neg, neutral: neu },
-        percentages: {
-          positive: total ? Math.round((pos / total) * 100) : 0,
-          negative: total ? Math.round((neg / total) * 100) : 0,
-          neutral: total ? Math.round((neu / total) * 100) : 0,
-        },
-      });
+        });
 
-      // Regions → Top 8
-      const regions = Object.entries(summary.regionCounts || {})
-        .map(([location, count]) => ({ location, count }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 8);
-      setLocationData(regions);
+        const regions = Object.entries(summary.regionCounts || {})
+          .map(([location, count]) => ({ location, count }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 8);
+        setLocationData(regions);
+      } catch (error) {
+        console.error("Failed to load analytics summary:", error);
+      }
     }
 
     async function loadTweets() {
-      const { tweets } = await fetchTweetsFiltered({
-        range: timeRange as any,
-        sentiment: sentimentFilter === "all" ? undefined : sentimentFilter,
-        page: 0,
-        limit: 100,
-      });
-      const mapped: UiTweet[] = (tweets || []).map((t) => ({
-        id: t.id,
-        author: t.author_name || t.handle || "Unknown",
-        text: t.text,
-        date: new Date(t.date).toISOString(),
-        metrics: {
-          replies: t.replies ?? 0,
-          retweets: t.reposts ?? 0,
-          likes: t.likes ?? 0,
-        },
-        sentiment: (t.sentiment || "").toLowerCase(),
-      }));
-      setUiTweets(mapped);
-
-      // Simple engagement data (latest 7)
-      const latest = mapped.slice(0, 7).map((t, idx) => ({
-        day: new Date(t.date).toLocaleDateString(),
-        likes: t.metrics.likes,
-        retweets: t.metrics.retweets,
-        replies: t.metrics.replies,
-      }));
-      setEngagementData(latest);
+      try {
+        const { tweets } = await fetchTweetsFiltered({
+          range: timeRange,
+          sentiment: sentimentFilter === "all" ? undefined : sentimentFilter,
+          page: 0,
+          limit: 500,
+        });
+        const mapped: UiTweet[] = (tweets || []).map((t) => {
+          const parsed = parseTweetDate(t.date);
+          return {
+            id: t.id,
+            author: t.author_name || t.handle || "Unknown",
+            text: t.text,
+            date: parsed ? formatDateOnly(parsed) : t.date || "",
+            metrics: {
+              replies: t.replies ?? 0,
+              retweets: t.reposts ?? 0,
+              likes: t.likes ?? 0,
+            },
+            sentiment: (t.sentiment || "").toLowerCase(),
+          };
+        });
+        setUiTweets(mapped);
+        setEngagementData(buildEngagementSeries(mapped, timeRange));
+      } catch (error) {
+        console.error("Failed to load analytics tweets:", error);
+      }
     }
 
     async function loadKeywords() {
-      const [posTweets, negTweets] = await Promise.all([
-        fetchTweetsBySentiment("positive"),
-        fetchTweetsBySentiment("negative"),
-      ]);
+      try {
+        const [posTweets, negTweets] = await Promise.all([
+          fetchTweetsBySentiment("positive"),
+          fetchTweetsBySentiment("negative"),
+        ]);
 
-      const countWords = (texts: string[]) => {
-        const counts: Record<string, number> = {};
-        texts.forEach((t) => {
-          extractKeywords(t, "").forEach((w) => {
-            counts[w] = (counts[w] || 0) + 1;
+        const countWords = (texts: string[]) => {
+          const counts: Record<string, number> = {};
+          texts.forEach((t) => {
+            extractKeywords(t, "").forEach((w) => {
+              counts[w] = (counts[w] || 0) + 1;
+            });
           });
-        });
-        return Object.entries(counts)
-          .map(([word, count]) => ({ word, count }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 25);
-      };
+          return Object.entries(counts)
+            .map(([word, count]) => ({ word, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 25);
+        };
 
-      setWordCloudData({
-        positive: countWords((posTweets || []).map((t) => t.text)),
-        negative: countWords((negTweets || []).map((t) => t.text)),
-      });
+        setWordCloudData({
+          positive: countWords((posTweets || []).map((t) => t.text)),
+          negative: countWords((negTweets || []).map((t) => t.text)),
+        });
+      } catch (error) {
+        console.error("Failed to load keyword clouds:", error);
+      }
     }
 
     loadAnalytics();
@@ -812,11 +913,15 @@ export default function AnalyticsDashboard() {
                     {totalTweets} tweets analyzed
                   </span>
                 </div>
-                <Select value={timeRange} onValueChange={setTimeRange}>
-                  <SelectTrigger className="w-[140px] h-11 bg-input border-border">
+                <Select
+                  value={timeRange}
+                  onValueChange={(v) => setTimeRange(v as TimeRange)}
+                >
+                  <SelectTrigger className="w-[160px] h-11 bg-input border-border">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="all">All time</SelectItem>
                     <SelectItem value="24h">Last 24h</SelectItem>
                     <SelectItem value="7d">Last 7 days</SelectItem>
                     <SelectItem value="30d">Last 30 days</SelectItem>
@@ -898,9 +1003,9 @@ export default function AnalyticsDashboard() {
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Sentiment Analysis */}
-            <Card className="border border-border shadow-sm bg-card overflow-hidden">
+            <Card className="border border-border shadow-sm bg-card">
               <CardContent className="p-0">
-                <div className="px-6 pb-4">
+                <div className="px-6 pt-6 pb-4">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-lg font-bold text-foreground">
@@ -915,12 +1020,18 @@ export default function AnalyticsDashboard() {
                     </div>
                   </div>
                 </div>
-                <div className="h-60 px-6 pb-6">
+                <div className="relative h-72 px-6">
                   <Doughnut
-                    data={sentimentData}
+                    data={{
+                      labels: sentimentData.labels,
+                      datasets: sentimentData.datasets,
+                    }}
                     options={{
                       responsive: true,
                       maintainAspectRatio: false,
+                      layout: {
+                        padding: 8,
+                      },
                       plugins: {
                         legend: {
                           display: false,
@@ -944,7 +1055,7 @@ export default function AnalyticsDashboard() {
                           boxPadding: 8,
                         },
                       },
-                      cutout: "65%",
+                      cutout: "62%",
                     }}
                   />
                 </div>
@@ -1003,45 +1114,27 @@ export default function AnalyticsDashboard() {
                   </div>
                 </div>
                 <div className="h-96">
-                  <Line
+                  <Bar
                     data={{
                       labels: engagementData.map((d) => d.day),
                       datasets: [
                         {
                           label: "Likes",
                           data: engagementData.map((d) => d.likes),
-                          borderColor: "rgba(239, 68, 68, 0.75)",
-                          backgroundColor: "rgba(239, 68, 68, 0.15)",
-                          fill: true,
-                          tension: 0.4,
-                          borderWidth: 2.5,
-                          pointRadius: 3,
-                          pointHoverRadius: 6,
-                          pointBackgroundColor: "rgba(239, 68, 68, 1)",
+                          backgroundColor: "rgba(239, 68, 68, 0.75)",
+                          borderRadius: 4,
                         },
                         {
                           label: "Retweets",
                           data: engagementData.map((d) => d.retweets),
-                          borderColor: "rgba(59, 130, 246, 0.75)",
-                          backgroundColor: "rgba(59, 130, 246, 0.15)",
-                          fill: true,
-                          tension: 0.4,
-                          borderWidth: 2.5,
-                          pointRadius: 3,
-                          pointHoverRadius: 6,
-                          pointBackgroundColor: "rgba(59, 130, 246, 1)",
+                          backgroundColor: "rgba(59, 130, 246, 0.75)",
+                          borderRadius: 4,
                         },
                         {
                           label: "Replies",
                           data: engagementData.map((d) => d.replies),
-                          borderColor: "rgba(34, 197, 94, 0.75)",
-                          backgroundColor: "rgba(34, 197, 94, 0.15)",
-                          fill: true,
-                          tension: 0.4,
-                          borderWidth: 2.5,
-                          pointRadius: 3,
-                          pointHoverRadius: 6,
-                          pointBackgroundColor: "rgba(34, 197, 94, 1)",
+                          backgroundColor: "rgba(34, 197, 94, 0.75)",
+                          borderRadius: 4,
                         },
                       ],
                     }}
@@ -1079,6 +1172,7 @@ export default function AnalyticsDashboard() {
                         y: {
                           grid: { color: "rgba(0, 0, 0, 0.05)" },
                           ticks: { font: { size: 11 } },
+                          beginAtZero: true,
                         },
                       },
                     }}
@@ -1146,6 +1240,7 @@ export default function AnalyticsDashboard() {
                         x: {
                           grid: { color: "rgba(0, 0, 0, 0.05)" },
                           ticks: { font: { size: 11 } },
+                          beginAtZero: true,
                         },
                         y: {
                           grid: { display: false },

@@ -8,9 +8,13 @@ import { Suspense } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
-  generator: "v0.app",
+  title: "Darpan",
+  description: "Social media insights and AI analysis",
+  icons: {
+    icon: [{ url: "/emblem.jpeg", type: "image/jpeg" }],
+    shortcut: "/emblem.jpeg",
+    apple: "/emblem.jpeg",
+  },
 };
 
 export default function RootLayout({

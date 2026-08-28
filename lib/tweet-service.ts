@@ -2,16 +2,40 @@ import { supabase, Database } from "./supabase-client";
 
 export type SupabaseTweet = Database["public"]["Tables"]["tweets"]["Row"];
 
-export type TimeRange = "24h" | "7d" | "30d" | "90d";
+export type TimeRange = "24h" | "7d" | "30d" | "90d" | "all";
 
-export function getSinceFromRange(range: TimeRange): string {
-  const now = new Date();
-  const d = new Date(now);
-  if (range === "24h") d.setDate(now.getDate() - 1);
-  else if (range === "7d") d.setDate(now.getDate() - 7);
-  else if (range === "30d") d.setDate(now.getDate() - 30);
-  else if (range === "90d") d.setDate(now.getDate() - 90);
-  return d.toISOString();
+/** Local calendar date as YYYY-MM-DD (compatible with Postgres `date` columns). */
+export function formatDateOnly(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+export function getSinceFromRange(range: TimeRange): string | null {
+  if (range === "all") return null;
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  if (range === "24h") d.setDate(d.getDate() - 1);
+  else if (range === "7d") d.setDate(d.getDate() - 7);
+  else if (range === "30d") d.setDate(d.getDate() - 30);
+  else if (range === "90d") d.setDate(d.getDate() - 90);
+  // Must be YYYY-MM-DD. ISO timestamps like 2026-08-21T10:00:00.000Z fail
+  // against Postgres `date` columns (`invalid input syntax for type date`).
+  return formatDateOnly(d);
+}
+
+function normalizeSentimentKey(value: string | null | undefined): string {
+  return (value || "").trim().toLowerCase();
+}
+
+function incrementSentiment(
+  counts: Record<string, number>,
+  sentiment: string | null | undefined
+) {
+  const key = normalizeSentimentKey(sentiment);
+  if (!key) return;
+  counts[key] = (counts[key] || 0) + 1;
 }
 
 /**
@@ -58,7 +82,7 @@ export async function fetchTweetsFiltered(params: {
     }
     if (params.range) {
       const since = getSinceFromRange(params.range);
-      query = query.gte("date", since);
+      if (since) query = query.gte("date", since);
     }
 
     const { data, error, count } = await query.range(
@@ -247,9 +271,7 @@ export async function getAnalyticsSummary(): Promise<{
 
     data.forEach((tweet) => {
       // Count sentiments
-      if (tweet.sentiment) {
-        sentimentCounts[tweet.sentiment] = (sentimentCounts[tweet.sentiment] || 0) + 1;
-      }
+      incrementSentiment(sentimentCounts, tweet.sentiment);
 
       // Count regions
       if (tweet.region) {
@@ -311,10 +333,9 @@ export async function getAnalyticsSummaryByRange(range: TimeRange): Promise<{
 }> {
   try {
     const since = getSinceFromRange(range);
-    const { data, error } = await supabase
-      .from("tweets")
-      .select("*")
-      .gte("date", since);
+    let query = supabase.from("tweets").select("*");
+    if (since) query = query.gte("date", since);
+    const { data, error } = await query;
 
     if (error || !data) {
       console.error("Error fetching analytics (range):", error?.message);
@@ -340,9 +361,7 @@ export async function getAnalyticsSummaryByRange(range: TimeRange): Promise<{
     let validEngagementCount = 0;
 
     data.forEach((tweet) => {
-      if (tweet.sentiment) {
-        sentimentCounts[tweet.sentiment] = (sentimentCounts[tweet.sentiment] || 0) + 1;
-      }
+      incrementSentiment(sentimentCounts, tweet.sentiment);
       if (tweet.region) {
         regionCounts[tweet.region] = (regionCounts[tweet.region] || 0) + 1;
       }
@@ -582,16 +601,15 @@ export async function getAuthorAnalytics(): Promise<{
       stats.totalReplies += tweet.replies || 0;
       stats.totalReposts += tweet.reposts || 0;
 
-      if (tweet.sentiment) {
-        stats.sentiments[tweet.sentiment] = (stats.sentiments[tweet.sentiment] || 0) + 1;
+      incrementSentiment(stats.sentiments, tweet.sentiment);
+
+      const date = tweet.date ? new Date(tweet.date) : null;
+      if (date && !Number.isNaN(date.getTime())) {
+        const dayKey = formatDateOnly(date);
+        const monthKey = dayKey.substring(0, 7);
+        stats.tweetsPerDay[dayKey] = (stats.tweetsPerDay[dayKey] || 0) + 1;
+        stats.tweetsPerMonth[monthKey] = (stats.tweetsPerMonth[monthKey] || 0) + 1;
       }
-
-      const date = new Date(tweet.date);
-      const dayKey = date.toISOString().split('T')[0];
-      const monthKey = dayKey.substring(0, 7);
-
-      stats.tweetsPerDay[dayKey] = (stats.tweetsPerDay[dayKey] || 0) + 1;
-      stats.tweetsPerMonth[monthKey] = (stats.tweetsPerMonth[monthKey] || 0) + 1;
 
       authorStats.set(authorName, stats);
     });
